@@ -17,7 +17,7 @@ const Converter = () => {
 
   const getApi = async () => {
     const result = await axios.get(
-      "http://data.fixer.io/api/symbols?access_key=4b6fdaa6b09b588b789709447d2370a7"
+      "http://data.fixer.io/api/latest?access_key=4b6fdaa6b09b588b789709447d2370a7"
     );
     console.log(result.data.rates);
     setCountry1(result.data.rates);
@@ -35,7 +35,7 @@ const Converter = () => {
         <div className="converter">
           <div className="input">
             <Text style={{ fontSize: "20px", fontWeight: "500" }} mb="8px">
-              Amount:
+              Amount
             </Text>
             <Input
               placeholder="Enter Amount"
