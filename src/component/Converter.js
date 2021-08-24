@@ -2,52 +2,68 @@ import { Text, Input, Container, Select, Button } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import CurrencyOptions from "./CurrencyOptions";
 
 const Converter = () => {
-  const [first, setFirst] = useState("");
-  const [second, setSecond] = useState("");
-  const [rate, setRate] = useState([]);
-
+  const [currencyOptions, setCurrencyOptions] = useState([]);
+  const [fromAmount, setFromAmount] = useState(0);
+  const [toAmount, setToAmount] = useState(0);
+  const [fromCurrency, setFromCurrency] = useState("");
+  const [toCurrency, setToCurrency] = useState("");
+  const [currencyNames, setCurrencyNames] = useState({});
   useEffect(() => {
-    getRate();
-  }, []);
-
-  const getRate = (first, second) => {
-    axios({
-      method: "GET",
-      url: `https://free.currconv.com/api/v7/convert?q=${first}_${second}&compact=ultra&apiKey=afcd6d2dd333f78493e9`,
-    })
-      .then((response) => {
-        console.log(response.data);
-
-        setRate(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
+    fetch(`https://api.frankfurter.app/currencies`)
+      .then((res) => res.json())
+      .then((data) => {
+        setCurrencyOptions(Object.keys(data));
+        setFromCurrency(Object.keys(data)[0]);
+        setToCurrency(Object.keys(data)[0]);
+        setCurrencyNames(data);
       });
-  };
-
-  const convert = (e) => {
-    e.preventDefault();
-    if (!first && !second) {
-      alert("Please Enter Currency");
+  }, []);
+  useEffect(() => {
+    if (parseInt(fromAmount) === 0) {
+      setToAmount(0);
+    } else if (fromAmount === "") {
+      setToAmount("");
+    } else if (fromCurrency === toCurrency) {
+      setToAmount(fromAmount);
     } else {
-      getRate(first, second);
+      fetch(
+        `https://api.frankfurter.app/latest?amount=${fromAmount}&from=${fromCurrency}&to=${toCurrency}`
+      )
+        .then((res) => res.json())
+        .then((data) => setToAmount(Object.values(data.rates)[0]));
     }
-  };
+  }, [fromCurrency, toCurrency, fromAmount, toAmount]);
   return (
     <Container maxW="container.lg">
-      <form onSubmit={convert}>
+      <form>
+        <h1>Currency Converter</h1>
         <div className="converter">
+          <div className="selectContry1">
+            <Text style={{ fontSize: "20px", fontWeight: "500" }} mb="8px">
+              Amount:
+            </Text>
+            <Input
+              type="number"
+              autoComplete="off"
+              value={fromAmount}
+              placeholder="Amount"
+              onChange={(e) => setFromAmount(e.target.value)}
+              size="md"
+            />
+          </div>
+          <div className="space" />
           <div className="selectContry1">
             <Text style={{ fontSize: "20px", fontWeight: "500" }} mb="8px">
               From:
             </Text>
-            <Input
-              type="text"
-              value={first}
-              onChange={(e) => setFirst(e.target.value)}
-              placeholder="Enter Currency AUD, USD, EUR etc"
+            <CurrencyOptions
+              prop="From currency"
+              fromCurrency={fromCurrency}
+              currencyOptions={currencyOptions}
+              updateCurrency={(e) => setFromCurrency(e.target.value)}
             />
           </div>
           <div className="space" />
@@ -55,27 +71,18 @@ const Converter = () => {
             <Text style={{ fontSize: "20px", fontWeight: "500" }} mb="8px">
               To:
             </Text>
-            <Input
-              type="text"
-              value={second}
-              onChange={(e) => setSecond(e.target.value)}
-              placeholder="Enter Currency AUD, USD, EUR etc"
+            <CurrencyOptions
+              prop="To currency"
+              toCurrency={toCurrency}
+              currencyOptions={currencyOptions}
+              updateCurrency={(e) => setToCurrency(e.target.value)}
             />
           </div>
         </div>
-        <div className="buttomRow">
-          <div className="result">
-            <h1>
-              1 {first} = {rate[`${first}_${second}`]} {second}
-            </h1>
-          </div>
-          <Button
-            type="submit"
-            className="button"
-            style={{ backgroundColor: "#406BC6", color: "#fff" }}
-          >
-            Convert
-          </Button>
+        <div className="result">
+          <h2>
+            {fromAmount} {fromCurrency} = {toAmount} {toCurrency}
+          </h2>
         </div>
       </form>
     </Container>

@@ -23,6 +23,13 @@ form {
   padding: 5rem 2rem;
   background-color: #fff;
 }
+
+form > h1 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 500;
+}
 .converter {
   display: flex;
   align-items: center;
@@ -45,14 +52,11 @@ form {
   flex: 1;
 }
 
-.buttomRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.result {
   margin-top: 1.5rem;
 }
 
-.result h1 {
+.result h2 {
   font-size: 2rem;
   font-weight: 500;
 }
