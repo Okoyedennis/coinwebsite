@@ -1,16 +1,14 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import "./App.css";
-import { ChakraProvider } from "@chakra-ui/react";
-import Converter from "./component/Converter";
+import Pages from "./Pages/index";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {
   return (
-    <ChakraProvider>
-      <div className="app">
-        <Converter />
-      </div>
-    </ChakraProvider>
+    <Router>
+      <Switch>
+        <Route component={Pages} />
+      </Switch>
+    </Router>
   );
 }
 
